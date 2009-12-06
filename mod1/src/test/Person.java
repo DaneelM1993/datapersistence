@@ -15,9 +15,9 @@ import java.io.Serializable;
 public class Person implements Serializable {
     public String cog;
     public String name;
-    public Float ages;
+    public Integer ages;
 
-    public Float getAges() {
+    public Integer getAges() {
         return ages;
     }
 
@@ -26,13 +26,13 @@ public class Person implements Serializable {
     }
 
 
-    public Person(String cog, String name, Float ages) {
+    public Person(String cog, String name, Integer ages) {
         this.cog = cog;
         this.name = name;
         this.ages = ages;
     }
 
-    public void setAges(Float ages) {
+    public void setAges(Integer ages) {
         this.ages = ages;
     }
 
