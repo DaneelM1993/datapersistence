@@ -413,4 +413,11 @@ public class MySQLmap<V> implements Map<Integer, V> {
         }
         return set;
     }
+    void close(){
+        try {
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

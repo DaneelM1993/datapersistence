@@ -18,15 +18,15 @@ import javax.swing.SwingUtilities;
  *
  * @author wizard1993
  */
-public class NetworkProxy<T extends Serializable> extends  AbstractProxy<T> {
+public class MySQLproxy<T extends Serializable> extends  AbstractProxy<T> {
     String pathofbackup;
     Set<updateEventListener> compToNotify = Collections.synchronizedSet(new HashSet<updateEventListener>());
-    public NetworkProxy(String table,Information information) {
-        map = new SQLiteMap<T>(table, information);
+    public MySQLproxy(String table,Information information) {
+        map = new MySQLmap<T>(table, information);
         System.out.println("network init "+table);
         pathofbackup=table+".xml";
     }
-    public NetworkProxy<T> init(){    
+    public MySQLproxy<T> init(){
         return this;
     }
     
@@ -85,23 +85,16 @@ public class NetworkProxy<T extends Serializable> extends  AbstractProxy<T> {
 
     @Override
     public void lockValues(Integer Key) throws IllegalAccessException {
-        ((SQLiteMap)map).lockValues(Key);
+        ((MySQLmap)map).lockValues(Key);
     }
 
     @Override
     public void releaseLock(Integer key) {
-       ((SQLiteMap)map).releaseLock(key);
+       ((MySQLmap)map).releaseLock(key);
     }
 
     @Override
-    public void dispose() {
-        try {
-            ((SQLiteMap) map).close();
-        } catch (SQLException ex) {
-            Logger.getLogger(NetworkProxy.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public void dispose() {       
+            ((MySQLmap) map).close();
     }
-
-
-    
 }
