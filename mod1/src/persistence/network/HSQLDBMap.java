@@ -115,7 +115,7 @@ public class HSQLDBMap<V> implements Map<Integer, V> {
     @Override
     public V remove(Object key) {
         try {
-            connection.prepareCall("delete from public." + table + " where ID=" + key.hashCode()).execute();
+            connection.prepareCall("delete from " + table + " where ID=" + key.hashCode()).execute();
             notifytoUpdate(lockedID);
             usedKey.remove(key.hashCode());
             connection.close();
@@ -134,7 +134,7 @@ public class HSQLDBMap<V> implements Map<Integer, V> {
     @Override
     public void clear() {
         try {
-            connection.prepareStatement("delete from public." + table).execute();
+            connection.prepareStatement("delete from " + table).execute();
             mapKeys.clear();
             cachedValues.clear();
             first = true;
@@ -191,7 +191,7 @@ public class HSQLDBMap<V> implements Map<Integer, V> {
     private Integer cache() {
         try {
             if (first) {
-                ResultSet rs = connection.createStatement().executeQuery("select * from public." + table + ";");
+                ResultSet rs = connection.createStatement().executeQuery("select * from " + table + ";");
                 while (rs.next()) {
                     mapKeys.put(rs.getInt(1), rs.getString(2));
                 }
@@ -220,7 +220,7 @@ public class HSQLDBMap<V> implements Map<Integer, V> {
 
     void checkLocked(Object key) throws IllegalAccessException {
         try {
-            ResultSet isLocked = connection.createStatement().executeQuery("select * from public." + table + "temp where ID=" + key.hashCode());
+            ResultSet isLocked = connection.createStatement().executeQuery("select * from " + table + "temp where ID=" + key.hashCode());
             if (isLocked.next()) {
                 throw new IllegalAccessException("the object is locked");
             }
@@ -232,7 +232,7 @@ public class HSQLDBMap<V> implements Map<Integer, V> {
     void lockValues(Object key) throws IllegalAccessException {
         checkLocked(key);
         try {
-            PreparedStatement pss = connection.prepareStatement("insert into public." + table + "temp values (?)");
+            PreparedStatement pss = connection.prepareStatement("insert into " + table + "temp values (?)");
             pss.setInt(1, key.hashCode());
             pss.execute();
             lockedID = key.hashCode();
@@ -243,7 +243,7 @@ public class HSQLDBMap<V> implements Map<Integer, V> {
 
     void releaseLock(Integer key) {
         try {
-            PreparedStatement pss = connection.prepareStatement("delete from public." + table + "temp where ID= ?");
+            PreparedStatement pss = connection.prepareStatement("delete from " + table + "temp where ID= ?");
             pss.setInt(1, key);
             pss.execute();
         } catch (SQLException ex) {
@@ -255,17 +255,17 @@ public class HSQLDBMap<V> implements Map<Integer, V> {
         try {
             Statement statement = connection.createStatement();
             try {
-                statement.executeUpdate("create temp table public.toupdate" + table + " (ID integer,Time double)");
+                statement.executeUpdate("create temp table toupdate" + table + " (ID integer,Time double)");
             } catch (Exception e) {
                 System.err.println("e1" + table);
             }
             try {
-                statement.executeUpdate("create temp table public." + table + "temp (ID integer, Primary key(ID));");
+                statement.executeUpdate("create temp table " + table + "temp (ID integer, Primary key(ID));");
             } catch (Exception e) {
                 System.err.println("e2" + table);
             }
             try {
-                statement.executeUpdate("create table public." + table + " (ID integer,XML varchar, Primary key(ID));");
+                statement.executeUpdate("create table " + table + " (ID integer,XML varchar, Primary key(ID));");
             } catch (Exception e) {
                 System.err.println("e3" + table);
             }
@@ -279,7 +279,7 @@ public class HSQLDBMap<V> implements Map<Integer, V> {
 
     private ResultSet getRStocache() throws SQLException {
         ResultSet rs = null;
-        rs = connection.prepareCall("select (ID) from public.toupdate" + table + " where Time>" + lastUpdate).executeQuery();
+        rs = connection.prepareCall("select (ID) from toupdate" + table + " where Time>" + lastUpdate).executeQuery();
 
         return rs;
     }
@@ -298,12 +298,12 @@ public class HSQLDBMap<V> implements Map<Integer, V> {
     }
 
     private void initStatement(String table) throws SQLException {
-        insert = connection.prepareStatement("insert into public." + table + " values(?,?)");
-        updateps = connection.prepareStatement("update public." + table + " set XML=? where ID=?");
-        toUpdate = connection.prepareStatement("insert into public.toupdate" + table + " values (?,?);");
-        getxml = connection.prepareStatement("select XML from public." + table + " where ID = ?");
-        getsize = connection.prepareStatement("select Count(*) from public." + table);
-        containsvalue = connection.prepareStatement("select Count(*) from public." + table + " where XML = ?");
+        insert = connection.prepareStatement("insert into " + table + " values(?,?)");
+        updateps = connection.prepareStatement("update " + table + " set XML=? where ID=?");
+        toUpdate = connection.prepareStatement("insert into toupdate" + table + " values (?,?);");
+        getxml = connection.prepareStatement("select XML from " + table + " where ID = ?");
+        getsize = connection.prepareStatement("select Count(*) from " + table);
+        containsvalue = connection.prepareStatement("select Count(*) from " + table + " where XML = ?");
     }
 
     private void insert(final Integer key, String s) throws SQLException {
@@ -400,6 +400,7 @@ public class HSQLDBMap<V> implements Map<Integer, V> {
         return set;
     }
     public void close() throws SQLException{
+        connection.createStatement().execute("SHUTDOWN");
         connection.close();
 
     }
