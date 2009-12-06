@@ -24,21 +24,26 @@ public class Main {
     public static void main(String... args) throws Exception {
         Random random=new Random();
         AbstractProxy<Person> personProxy =new HSQLDBProxy<Person>("person", new Information().setImpostazioni("jdbc:hsqldb:file:D:\\testdb1.db", "org.hsqldb.jdbcDriver", "sa", ""));
-        Person p=new Person("asd", "qw", 3);
+        moretest(personProxy, random);
+    }
+
+    private static void testone(AbstractProxy<Person> personProxy) {
+        Person p = new Person("asd", "qw", 3);
         personProxy.map.put(p.hashCode(), p);
         personProxy.map.values();
         personProxy.dispose();
     }
 
     private static void moretest(AbstractProxy<Person> personProxy, Random random) {
-        String[] names = {"mario", "gianni", "paolo", "giovanni", "antonio", "carlo"};
-        String[] surnames = {"rossi", "verdi", "bianchi", "ciompi"};
+        String[] names = {"mario", "gianni", "paolo", "giovanni", "antonio", "carlo","pippo","sergio","enzo"};
+        String[] surnames = {"rossi", "verdi", "bianchi", "ciompi","neri","gialli","visconti",};
         personProxy.map.clear();
-        for (int i = 0; i < 150; i++) {
+        for (int i = 0; i < 10; i++) {
             Integer idx = random.nextInt(100);
             Person p = new Person(surnames[idx % surnames.length], names[idx % names.length], idx);
-            personProxy.map.put(p.hashCode(), p);
+            personProxy.map.put(personProxy.generateKey(), p);
         }
+        personProxy.map.values();
         personProxy.dispose();
     }
 
