@@ -96,10 +96,10 @@ public class SQLiteMap<V> implements Map<Integer, V> {
             String s = xStream.toXML(value);
             if (!containsKey(key)) {
                 insert(key, s);
-                System.out.println("insert");
+                //System.out.println("insert");
             } else {
                 update(s, key);
-                System.out.println("update");
+                //System.out.println("update");
             }
             mapKeys.put(key, s);
             cachedValues.put(s.hashCode(), value);
@@ -134,7 +134,7 @@ public class SQLiteMap<V> implements Map<Integer, V> {
     @Override
     public void clear() {
         try {
-            connection.prepareCall("delete  from " + table).execute();
+            connection.prepareStatement("delete from " + table).execute();
             mapKeys.clear();
             cachedValues.clear();
             first = true;
