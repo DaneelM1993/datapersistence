@@ -14,7 +14,7 @@ import persistence.local.Information;
  *
  * @author wizard1993
  */
-public class MySQLmapgood<V> implements Map<Integer, V> {
+public class SQLiteMap<V> implements Map<Integer, V> {
 
     private PreparedStatement insert = null;
     private PreparedStatement updateps = null;
@@ -39,7 +39,7 @@ public class MySQLmapgood<V> implements Map<Integer, V> {
 
     }
 
-    public MySQLmapgood(String table, Information information) {
+    public SQLiteMap(String table, Information information) {
         this.table = table;
         try {
             Class.forName(information.getJdbcdriver());
@@ -85,7 +85,7 @@ public class MySQLmapgood<V> implements Map<Integer, V> {
             }
             return Deserialize(xml);
         } catch (Exception ex) {
-            Logger.getLogger(MySQLmapgood.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SQLiteMap.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
@@ -96,12 +96,13 @@ public class MySQLmapgood<V> implements Map<Integer, V> {
             String s = xStream.toXML(value);
             if (!containsKey(key)) {
                 insert(key, s);
+                System.out.println("insert");
             } else {
                 update(s, key);
+                System.out.println("update");
             }
             mapKeys.put(key, s);
             cachedValues.put(s.hashCode(), value);
-
 
 
         } catch (SQLException ex) {
@@ -137,7 +138,6 @@ public class MySQLmapgood<V> implements Map<Integer, V> {
             mapKeys.clear();
             cachedValues.clear();
             first = true;
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -155,7 +155,6 @@ public class MySQLmapgood<V> implements Map<Integer, V> {
     }
 
     @Override
-    @Deprecated
     /**
      * Due perfomance reason this method is deprecated, it cause le loading of all the element of database blocking application maybe for a long time
      * consider tu use keyset in addiction with get methods
@@ -190,11 +189,26 @@ public class MySQLmapgood<V> implements Map<Integer, V> {
     }
 
     private Integer cache() {
-        for (Integer integer : keySet()) {
-            mapKeys.put(integer, getXML(integer));
+        try {
+            if (first) {
+                ResultSet rs = connection.createStatement().executeQuery("select * from " + table + ";");
+                while (rs.next()) {
+                    mapKeys.put(rs.getInt(1), rs.getString(2));
+                }
+                rs.close();
+                first = false;
+            } else {
+                ResultSet rs = getRStocache();
+                while (rs.next()) {
+                    Integer i = rs.getInt(1);
+                    mapKeys.put(i, getfromQuery(i));
+                }
+            }
+
+            lastUpdate = System.currentTimeMillis();
+        } catch (Exception e) {
         }
-        //con.prepareCall("delete from toupdate" + table).execute();
-        lastUpdate = System.currentTimeMillis();
+
         return 0;
     }
 
@@ -211,7 +225,7 @@ public class MySQLmapgood<V> implements Map<Integer, V> {
                 throw new IllegalAccessException("the object is locked");
             }
         } catch (SQLException ex) {
-            Logger.getLogger(MySQLmapgood.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SQLiteMap.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -223,7 +237,7 @@ public class MySQLmapgood<V> implements Map<Integer, V> {
             pss.execute();
             lockedID = key.hashCode();
         } catch (SQLException ex) {
-            Logger.getLogger(MySQLmapgood.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SQLiteMap.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -233,7 +247,7 @@ public class MySQLmapgood<V> implements Map<Integer, V> {
             pss.setInt(1, key);
             pss.execute();
         } catch (SQLException ex) {
-            Logger.getLogger(MySQLmapgood.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SQLiteMap.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -241,21 +255,20 @@ public class MySQLmapgood<V> implements Map<Integer, V> {
         try {
             Statement statement = connection.createStatement();
             try {
-                statement.executeUpdate("create table toupdate" + table + " (ID integer,Time double) ENGINE=MEMORY;");
+                statement.executeUpdate("create temp table toupdate" + table + " (ID integer,Time double)");
             } catch (Exception e) {
                 System.err.println("e1" + table);
             }
             try {
-                statement.executeUpdate("create table " + table + "temp (ID integer, Primary key(ID))ENGINE=MEMORY;");
+                statement.executeUpdate("create temp table " + table + "temp (ID integer, Primary key(ID));");
             } catch (Exception e) {
                 System.err.println("e2" + table);
             }
             try {
-                statement.executeUpdate("create table " + table + " (ID integer,XML text, Primary key(ID));");
+                statement.executeUpdate("create table " + table + " (ID integer,XML varchar, Primary key(ID));");
             } catch (Exception e) {
                 System.err.println("e3" + table);
             }
-
             statement.close();
 
         } catch (Exception e) {
@@ -266,14 +279,8 @@ public class MySQLmapgood<V> implements Map<Integer, V> {
 
     private ResultSet getRStocache() throws SQLException {
         ResultSet rs = null;
-        if (!first) {
-            rs = connection.prepareCall("select * from toupdate" + table + " where Time>" + lastUpdate).executeQuery();
+        rs = connection.prepareCall("select (ID) from toupdate" + table + " where Time>" + lastUpdate).executeQuery();
 
-        } else {
-            rs = connection.prepareCall("select (ID) from " + table + " ;").executeQuery();
-            first = false;
-
-        }
         return rs;
     }
 
@@ -319,7 +326,7 @@ public class MySQLmapgood<V> implements Map<Integer, V> {
                         toUpdate.clearParameters();
                     }
                 } catch (SQLException ex) {
-                    Logger.getLogger(MySQLmapgood.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(SQLiteMap.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         };
@@ -345,6 +352,7 @@ public class MySQLmapgood<V> implements Map<Integer, V> {
         updateps.setInt(2, key);
         updateps.executeUpdate();
         updateps.clearParameters();
+
     }
 
     private int getSize() {
@@ -390,5 +398,8 @@ public class MySQLmapgood<V> implements Map<Integer, V> {
             set.add(rs.getInt(1));
         }
         return set;
+    }
+    public void close() throws SQLException{
+        connection.close();
     }
 }
