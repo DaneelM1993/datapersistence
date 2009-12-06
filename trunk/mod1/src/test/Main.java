@@ -23,7 +23,7 @@ public class Main {
 
     public static void main(String... args) throws Exception {
         Random random=new Random();
-        AbstractProxy<Person> personProxy =new HSQLDBProxy<Person>("person", new Information().setImpostazioni("jdbc:hsqldb:file:testdb.db", "org.hsqldb.jdbcDriver", "sa", ""));
+        AbstractProxy<Person> personProxy =new HSQLDBProxy<Person>("person", new Information().setImpostazioni("jdbc:hsqldb:file:D:\\testdb1.db", "org.hsqldb.jdbcDriver", "sa", ""));
         Person p=new Person("asd", "qw", 3);
         personProxy.map.put(p.hashCode(), p);
         personProxy.map.values();
