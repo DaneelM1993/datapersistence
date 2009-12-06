@@ -22,7 +22,7 @@ public class NetworkProxy<T extends Serializable> extends  AbstractProxy<T> {
     String pathofbackup;
     Set<updateEventListener> compToNotify = Collections.synchronizedSet(new HashSet<updateEventListener>());
     public NetworkProxy(String table,Information information) {
-        map = new MySQLmap1<T>(table, information);
+        map = new SQLiteMap<T>(table, information);
         System.out.println("network init "+table);
         pathofbackup=table+".xml";
     }
@@ -85,18 +85,18 @@ public class NetworkProxy<T extends Serializable> extends  AbstractProxy<T> {
 
     @Override
     public void lockValues(Integer Key) throws IllegalAccessException {
-        ((MySQLmap1)map).lockValues(Key);
+        ((SQLiteMap)map).lockValues(Key);
     }
 
     @Override
     public void releaseLock(Integer key) {
-       ((MySQLmap1)map).releaseLock(key);
+       ((SQLiteMap)map).releaseLock(key);
     }
 
     @Override
     public void dispose() {
         try {
-            ((MySQLmap1) map).close();
+            ((SQLiteMap) map).close();
         } catch (SQLException ex) {
             Logger.getLogger(NetworkProxy.class.getName()).log(Level.SEVERE, null, ex);
         }

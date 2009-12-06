@@ -5,12 +5,9 @@
  */
 package test;
 
-import com.thoughtworks.xstream.XStream;
-import java.io.*;
 import java.util.Vector;
 import persistence.local.AbstractProxy;
 import persistence.local.Information;
-import persistence.local.XmlProxy;
 import persistence.network.NetworkProxy;
 
 /**

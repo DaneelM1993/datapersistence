@@ -14,7 +14,7 @@ import persistence.local.Information;
  *
  * @author wizard1993
  */
-public class MySQLmap1<V> implements Map<Integer, V> {
+public class MySQLmap<V> implements Map<Integer, V> {
 
     private PreparedStatement insert = null;
     private PreparedStatement updateps = null;
@@ -27,7 +27,7 @@ public class MySQLmap1<V> implements Map<Integer, V> {
     private String table;
     private TreeMap<Integer, String> mapKeys = new TreeMap<Integer, String>();
     private TreeMap<Integer, V> cachedValues = new TreeMap<Integer, V>();
-    private Set<Integer> usedKey = new TreeSet<Integer>();
+    private TreeSet<Integer> usedKey = new TreeSet<Integer>();
     private Connection connection;
     private XStream xStream = new XStream();
     private boolean first = true;
@@ -39,7 +39,7 @@ public class MySQLmap1<V> implements Map<Integer, V> {
 
     }
 
-    public MySQLmap1(String table, Information information) {
+    public MySQLmap(String table, Information information) {
         this.table = table;
         try {
             Class.forName(information.getJdbcdriver());
@@ -85,7 +85,7 @@ public class MySQLmap1<V> implements Map<Integer, V> {
             }
             return Deserialize(xml);
         } catch (Exception ex) {
-            Logger.getLogger(MySQLmap1.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MySQLmap.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
@@ -96,13 +96,13 @@ public class MySQLmap1<V> implements Map<Integer, V> {
             String s = xStream.toXML(value);
             if (!containsKey(key)) {
                 insert(key, s);
-                System.out.println("insert");
             } else {
                 update(s, key);
-                System.out.println("update");
             }
             mapKeys.put(key, s);
             cachedValues.put(s.hashCode(), value);
+            notifytoUpdate(key);
+
 
 
         } catch (SQLException ex) {
@@ -118,7 +118,8 @@ public class MySQLmap1<V> implements Map<Integer, V> {
             connection.prepareCall("delete from " + table + " where ID=" + key.hashCode()).execute();
             notifytoUpdate(lockedID);
             usedKey.remove(key.hashCode());
-            connection.close();
+            mapKeys.remove(key);
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -138,6 +139,7 @@ public class MySQLmap1<V> implements Map<Integer, V> {
             mapKeys.clear();
             cachedValues.clear();
             first = true;
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -201,7 +203,10 @@ public class MySQLmap1<V> implements Map<Integer, V> {
                 ResultSet rs = getRStocache();
                 while (rs.next()) {
                     Integer i = rs.getInt(1);
-                    mapKeys.put(i, getfromQuery(i));
+                    String str = getfromQuery(i);
+                    if (str != null) {
+                        mapKeys.put(i, str);
+                    }
                 }
             }
 
@@ -225,7 +230,7 @@ public class MySQLmap1<V> implements Map<Integer, V> {
                 throw new IllegalAccessException("the object is locked");
             }
         } catch (SQLException ex) {
-            Logger.getLogger(MySQLmap1.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MySQLmap.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -237,7 +242,7 @@ public class MySQLmap1<V> implements Map<Integer, V> {
             pss.execute();
             lockedID = key.hashCode();
         } catch (SQLException ex) {
-            Logger.getLogger(MySQLmap1.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MySQLmap.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -247,7 +252,7 @@ public class MySQLmap1<V> implements Map<Integer, V> {
             pss.setInt(1, key);
             pss.execute();
         } catch (SQLException ex) {
-            Logger.getLogger(MySQLmap1.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MySQLmap.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -255,20 +260,21 @@ public class MySQLmap1<V> implements Map<Integer, V> {
         try {
             Statement statement = connection.createStatement();
             try {
-                statement.executeUpdate("create temp table toupdate" + table + " (ID integer,Time double)");
+                statement.executeUpdate("create table toupdate" + table + " (ID integer,Time double) ENGINE=MEMORY;");
             } catch (Exception e) {
                 System.err.println("e1" + table);
             }
             try {
-                statement.executeUpdate("create temp table " + table + "temp (ID integer, Primary key(ID));");
+                statement.executeUpdate("create table " + table + "temp (ID integer, Primary key(ID))ENGINE=MEMORY;");
             } catch (Exception e) {
                 System.err.println("e2" + table);
             }
             try {
-                statement.executeUpdate("create table " + table + " (ID integer,XML varchar, Primary key(ID));");
+                statement.executeUpdate("create table " + table + " (ID integer,XML text, Primary key(ID));");
             } catch (Exception e) {
                 System.err.println("e3" + table);
             }
+
             statement.close();
 
         } catch (Exception e) {
@@ -279,7 +285,11 @@ public class MySQLmap1<V> implements Map<Integer, V> {
 
     private ResultSet getRStocache() throws SQLException {
         ResultSet rs = null;
-        rs = connection.prepareCall("select (ID) from toupdate" + table + " where Time>" + lastUpdate).executeQuery();
+        if (first) {
+            rs = connection.prepareCall("select (ID) from " + table + ";").executeQuery();
+        } else {
+            rs = connection.prepareCall("select (ID) from toupdate" + table + " where Time>" + lastUpdate).executeQuery();
+        }
 
         return rs;
     }
@@ -326,7 +336,7 @@ public class MySQLmap1<V> implements Map<Integer, V> {
                         toUpdate.clearParameters();
                     }
                 } catch (SQLException ex) {
-                    Logger.getLogger(MySQLmap1.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MySQLmap.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         };
@@ -352,18 +362,22 @@ public class MySQLmap1<V> implements Map<Integer, V> {
         updateps.setInt(2, key);
         updateps.executeUpdate();
         updateps.clearParameters();
-
     }
 
     private int getSize() {
         int num = 0;
         try {
+
             ResultSet rs = getsize.executeQuery();
+
             if (rs.next()) {
                 num = rs.getInt(1);
             }
+            rs.close();
+
         } catch (Exception e) {
             e.printStackTrace();
+            System.exit(121);
         }
         return num;
     }
@@ -398,8 +412,5 @@ public class MySQLmap1<V> implements Map<Integer, V> {
             set.add(rs.getInt(1));
         }
         return set;
-    }
-    public void close() throws SQLException{
-        connection.close();
     }
 }
