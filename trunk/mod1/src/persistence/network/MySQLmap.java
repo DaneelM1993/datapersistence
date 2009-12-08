@@ -42,11 +42,11 @@ public class MySQLmap<V> implements Map<Integer, V> {
     public MySQLmap(String table, Information information) {
         this.table = table;
         try {
-            if (table == null) {
-                Class.forName(information.getJdbcdriver());
-                connection = DriverManager.getConnection(information.getJdbcurl(), information.getUser(), information.getPsw());
-                createTables();
-            }
+
+            Class.forName(information.getJdbcdriver());
+            connection = DriverManager.getConnection(information.getJdbcurl(), information.getUser(), information.getPsw());
+            createTables();
+
             initStatement(table);
 
         } catch (Exception e) {
@@ -415,7 +415,8 @@ public class MySQLmap<V> implements Map<Integer, V> {
         }
         return set;
     }
-    void close(){
+
+    void close() {
         try {
             connection.close();
         } catch (Exception e) {
