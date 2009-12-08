@@ -28,7 +28,7 @@ public class MySQLmap<V> implements Map<Integer, V> {
     private TreeMap<Integer, String> mapKeys = new TreeMap<Integer, String>();
     private TreeMap<Integer, V> cachedValues = new TreeMap<Integer, V>();
     private TreeSet<Integer> usedKey = new TreeSet<Integer>();
-    private Connection connection;
+    private static Connection connection;
     private XStream xStream = new XStream();
     private boolean first = true;
 
@@ -42,9 +42,11 @@ public class MySQLmap<V> implements Map<Integer, V> {
     public MySQLmap(String table, Information information) {
         this.table = table;
         try {
-            Class.forName(information.getJdbcdriver());
-            connection = DriverManager.getConnection(information.getJdbcurl(), information.getUser(), information.getPsw());
-            createTables();
+            if (table == null) {
+                Class.forName(information.getJdbcdriver());
+                connection = DriverManager.getConnection(information.getJdbcurl(), information.getUser(), information.getPsw());
+                createTables();
+            }
             initStatement(table);
 
         } catch (Exception e) {
