@@ -23,7 +23,7 @@ public class Main {
 
     public static void main(String... args) throws Exception {
         Random random=new Random();
-        AbstractProxy<Person> personProxy =new HSQLDBProxy<Person>("person", new Information().setImpostazioni("jdbc:hsqldb:file:D:\\testdb1.db", "org.hsqldb.jdbcDriver", "sa", ""));
+        AbstractProxy<Person> personProxy =new SQLiteProxy<Person>("person", new Information().setImpostazioni("jdbc:sqlite:D:\\test1.db", "org.sqlite.JDBC", "sa", ""));
         moretest(personProxy, random);
     }
 
@@ -37,8 +37,9 @@ public class Main {
     private static void moretest(AbstractProxy<Person> personProxy, Random random) {
         String[] names = {"mario", "gianni", "paolo", "giovanni", "antonio", "carlo","pippo","sergio","enzo"};
         String[] surnames = {"rossi", "verdi", "bianchi", "ciompi","neri","gialli","visconti",};
-        personProxy.map.clear();
-        for (int i = 0; i < 10; i++) {
+        //personProxy.map.clear();
+        System.out.println(personProxy.map.values());
+        for (int i = 0; i < 150; i++) {
             Integer idx = random.nextInt(100);
             Person p = new Person(surnames[idx % surnames.length], names[idx % names.length], idx);
             personProxy.map.put(personProxy.generateKey(), p);

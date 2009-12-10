@@ -42,7 +42,7 @@ public class SQLiteMap<V> implements Map<Integer, V> {
     public SQLiteMap(String table, Information information) {
         this.table = table;
         try {
-            if (table == null) {
+            if (connection == null) {
                 Class.forName(information.getJdbcdriver());
                 connection = DriverManager.getConnection(information.getJdbcurl(), information.getUser(), information.getPsw());
                 createTables();
