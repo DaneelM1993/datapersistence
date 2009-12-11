@@ -35,8 +35,8 @@ public class Main {
     }
 
     private static void moretest(AbstractProxy<Person> personProxy, Random random) {
-        String[] names = {"mario", "gianni", "paolo", "giovanni", "antonio", "carlo","pippo","sergio"};
-        String[] surnames = {"rossi", "verdi", "bianchi", "ciompi","neri","gialli","visconti","sforza","pazzi"};
+        String[] names = {"mario", "gianni", "paolo", "giovanni", "antonio", "carlo","pippo","sergio","luigi","adelaide","carmelo","gennaro"};
+        String[] surnames = {"rossi", "verdi", "bianchi", "ciompi","neri","gialli","visconti","sforza","pazzi","uberti","bonaparte","napolitano","mazzini","cavour","bertinotti"};
         personProxy.map.clear();
         System.out.println(personProxy.map.values());
         for (int i = 0; i < 150; i++) {
