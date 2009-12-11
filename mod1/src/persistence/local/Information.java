@@ -14,16 +14,16 @@ public class Information {
 
     public static Information getImpostazioni() {
         if (impostazioni == null) {
-            setImpostazioni(new Information());
+            setInformation(new Information());
         }
         return impostazioni;
     }
 
     /**
-     * @param aImpostazioni the impostazioni to set
+     * @param inf the impostazioni to set
      */
-    public static void setImpostazioni(Information aImpostazioni) {
-        impostazioni = aImpostazioni;
+    public static void setInformation(Information inf) {
+        impostazioni = inf;
     }
     private  String jdbcurl;
     private String jdbcdriver;
