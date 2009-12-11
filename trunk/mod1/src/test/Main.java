@@ -22,7 +22,7 @@ public class Main {
 
     public static void main(String... args) throws Exception {
         Random random=new Random(12);
-        AbstractProxy<Person> personProxy =new FirebirdProxy<Person>("person", new Information().setImpostazioni("jdbc:firebirdsql:embedded:database.fdb", "org.firebirdsql.jdbc.FBDriver", "", ""));
+        AbstractProxy<Person> personProxy =new SQLiteProxy<Person>("person", new Information().setImpostazioni("jdbc:sqlite:testdsa", "org.sqlite.JDBC", "", ""));
         moretest(personProxy, random);
         //Thread.sleep(150000);
     }
