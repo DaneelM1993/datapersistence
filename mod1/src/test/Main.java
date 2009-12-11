@@ -23,7 +23,7 @@ public class Main {
 
     public static void main(String... args) throws Exception {
         Random random=new Random(12);
-        AbstractProxy<Person> personProxy =new HSQLDBProxy<Person>("person", new Information().setImpostazioni("jdbc:hsqldb:file:D:\\test1.db;shutdown=true", "org.hsqldb.jdbcDriver", "sa", ""));
+        AbstractProxy<Person> personProxy =new HSQLDBProxy<Person>("person", new Information().setImpostazioni("jdbc:hsqldb:hsql://localhost/person", "org.hsqldb.jdbcDriver", "sa", ""));
         moretest(personProxy, random);
         //Thread.sleep(150000);
     }
@@ -46,7 +46,8 @@ public class Main {
             personProxy.map.put(personProxy.generateKey(), p);
         }
         personProxy.map.values();
-        personProxy.dispose();
+       // personProxy.dispose();
+
     }
 
     
