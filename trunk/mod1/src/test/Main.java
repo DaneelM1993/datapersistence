@@ -10,8 +10,7 @@ import java.util.Random;
 import java.util.Vector;
 import persistence.local.AbstractProxy;
 import persistence.local.Information;
-import persistence.network.HSQLDBProxy;
-import persistence.network.SQLiteProxy;
+import persistence.network.*;
 
 /**
  *
@@ -23,7 +22,7 @@ public class Main {
 
     public static void main(String... args) throws Exception {
         Random random=new Random(12);
-        AbstractProxy<Person> personProxy =new HSQLDBProxy<Person>("person", new Information().setImpostazioni("jdbc:hsqldb:hsql://localhost/person", "org.hsqldb.jdbcDriver", "sa", ""));
+        AbstractProxy<Person> personProxy =new FirebirdProxy<Person>("person", new Information().setImpostazioni("jdbc:firebirdsql:embedded:database.fdb", "org.firebirdsql.jdbc.FBDriver", "", ""));
         moretest(personProxy, random);
         //Thread.sleep(150000);
     }
