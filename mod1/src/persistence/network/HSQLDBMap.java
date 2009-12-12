@@ -44,7 +44,8 @@ public class HSQLDBMap<V> implements Map<Integer, V> {
         this.table = table;
         try {
             if (connection == null) {
-                createConnection(table, information);
+                Class.forName(information.getJdbcdriver());
+                connection=DriverManager.getConnection(information.getJdbcurl(), information.getUser(), information.getPsw());
                 createTables();
             }
             initStatement(this.table);
@@ -56,20 +57,7 @@ public class HSQLDBMap<V> implements Map<Integer, V> {
 
     }
 
-    private void createConnection(String str, Information information) throws SQLException, ClassNotFoundException {
-        Class.forName(information.getJdbcdriver());
-        if (str.contains("hsqldb:file") || str.contains("hsqldb:mem:")) {
-            connection = DriverManager.getConnection(information.getJdbcurl(), information.getUser(), information.getPsw());
-        } else {
-            try {
-                connection = DriverManager.getConnection(information.getJdbcurl(), information.getUser(), information.getPsw());
-            } catch (Exception e) {
-                System.err.println("error creating network connection, try to start local server");
-                org.hsqldb.Server.main(new String[]{"-database.0", "file:" + table, "-dbname.0",table});                
-                connection = DriverManager.getConnection("jdbc:hsqldb:hsql://localhost/" + table+";shutdown=true", "sa", "");                
-            }
-        }
-    }
+
 
     @Override
     public boolean isEmpty() {

@@ -10,26 +10,31 @@ import java.util.logging.Logger;
 import persistence.local.*;
 import java.io.Serializable;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.*;
 import javax.swing.SwingUtilities;
-
 
 /**
  *
  * @author wizard1993
  */
-public class HSQLDBProxy<T extends Serializable> extends  AbstractProxy<T> {
+public class HSQLDBProxy<T extends Serializable> extends AbstractProxy<T> {
+
+    Connection connection;
     String pathofbackup;
     Set<updateEventListener> compToNotify = Collections.synchronizedSet(new HashSet<updateEventListener>());
-    public HSQLDBProxy(String table,Information information) {
+    String table;
+
+    public HSQLDBProxy(String table, Information information) {
+        createConnection(table, information);
         map = new HSQLDBMap<T>(table, information);
-        System.out.println("network init "+table);
-        pathofbackup=table+".xml";
+        System.out.println("network init " + table);
+        pathofbackup = table + ".xml";
     }
-    public HSQLDBProxy<T> init(){
+
+    public HSQLDBProxy<T> init() {
         return this;
     }
-    
 
     @Override
     public void AddComponentToNotify(updateEventListener uel) {
@@ -79,18 +84,18 @@ public class HSQLDBProxy<T extends Serializable> extends  AbstractProxy<T> {
         for (Integer idx : map.keySet()) {
             xml.map.put(idx, map.get(idx));
         }
-        
+
         xml.commit();
     }
 
     @Override
     public void lockValues(Integer Key) throws IllegalAccessException {
-        ((HSQLDBMap)map).lockValues(Key);
+        ((HSQLDBMap) map).lockValues(Key);
     }
 
     @Override
     public void releaseLock(Integer key) {
-       ((HSQLDBMap)map).releaseLock(key);
+        ((HSQLDBMap) map).releaseLock(key);
     }
 
     @Override
@@ -103,6 +108,37 @@ public class HSQLDBProxy<T extends Serializable> extends  AbstractProxy<T> {
         }
     }
 
+    private void createConnection(String str, Information information) {
+        try {
+            Class.forName(information.getJdbcdriver());
+            if (!(str.contains("hsqldb:file") || str.contains("hsqldb:mem:"))) {
+                try {
+                    connection = DriverManager.getConnection(information.getJdbcurl(), information.getUser(), information.getPsw());
+                    connection.close();
+                } catch (Exception e) {
+                    System.err.println("error creating network connection, try to start local server");
+                    String dbname = getDBname(information.getJdbcurl());
+                    org.hsqldb.Server.main(new String[]{"-database.0", "file:" + dbname, "-dbname.0", dbname});
 
-    
+                }
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(HSQLDBProxy.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+
+
+    }
+
+    private String getDBname(String jdbcurl) {
+        String str = jdbcurl.replace("jdbc:hsqldb:hsql://", "");
+        int idx = str.indexOf(";");
+        if (idx >= 0) {
+            str = str.substring(0, idx);
+        }
+        idx = str.indexOf("/");
+        str = str.substring(idx+1);
+        System.out.println(str);
+        return str;
+    }
 }
