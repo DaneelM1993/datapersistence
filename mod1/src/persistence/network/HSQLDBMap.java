@@ -159,12 +159,7 @@ public class HSQLDBMap<V> implements Map<Integer, V> {
 
     }
 
-    @Override
-    /**
-     * Due perfomance reason this method is deprecated, it cause le loading of all the element of database blocking application maybe for a long time
-     * consider tu use keyset in addiction with get methods
-     *
-     */
+
     public Collection<V> values() {
         long l = System.currentTimeMillis();
         cache();
@@ -406,7 +401,7 @@ public class HSQLDBMap<V> implements Map<Integer, V> {
     }
 
     public void close() throws SQLException {
-        connection.createStatement().execute("SHUTDOWN");
+        //connection.createStatement().execute("SHUTDOWN");
         connection.close();
 
     }
