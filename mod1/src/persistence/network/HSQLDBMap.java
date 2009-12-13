@@ -6,6 +6,7 @@ package persistence.network;
 
 import com.thoughtworks.xstream.XStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.*;
 import java.util.*;
 import java.util.logging.*;
@@ -15,7 +16,7 @@ import persistence.local.Information;
  *
  * @author wizard1993
  */
-public class HSQLDBMap<V> implements Map<Integer, V> {
+public class HSQLDBMap<V extends Serializable> implements Map<Integer, V> {
 
     private PreparedStatement insert = null;
     private PreparedStatement updateps = null;
@@ -30,7 +31,7 @@ public class HSQLDBMap<V> implements Map<Integer, V> {
     private TreeMap<Integer, V> cachedValues = new TreeMap<Integer, V>();
     private Set<Integer> usedKey = new TreeSet<Integer>();
     private static Connection connection;
-    private XStream xStream = new XStream();
+    private Serializer serializer = null;
     private boolean first = true;
 
     @Override
@@ -43,11 +44,17 @@ public class HSQLDBMap<V> implements Map<Integer, V> {
     public HSQLDBMap(String table, Information information) {
         this.table = table;
         try {
+            if (information.ser == null) {
+                serializer = new XMLSerializier();
+            } else {
+                serializer = information.ser;
+            }
             if (connection == null) {
                 Class.forName(information.getJdbcdriver());
-                connection=DriverManager.getConnection(information.getJdbcurl(), information.getUser(), information.getPsw());
-                createTables();
+                connection = DriverManager.getConnection(information.getJdbcurl(), information.getUser(), information.getPsw());
+
             }
+            createTables();
             initStatement(this.table);
 
         } catch (Exception e) {
@@ -56,8 +63,6 @@ public class HSQLDBMap<V> implements Map<Integer, V> {
         }
 
     }
-
-
 
     @Override
     public boolean isEmpty() {
@@ -98,7 +103,7 @@ public class HSQLDBMap<V> implements Map<Integer, V> {
     @Override
     public V put(final Integer key, final V value) {
         try {
-            String s = xStream.toXML(value);
+            String s = serializer.toString(value);
             if (!containsKey(key)) {
                 insert(key, s);
                 //System.out.println("insert");
@@ -159,7 +164,6 @@ public class HSQLDBMap<V> implements Map<Integer, V> {
 
     }
 
-
     public Collection<V> values() {
         long l = System.currentTimeMillis();
         cache();
@@ -182,7 +186,7 @@ public class HSQLDBMap<V> implements Map<Integer, V> {
         if (cachedValues.containsKey(xml.hashCode())) {
             return (V) cachedValues.get(xml.hashCode());
         } else {
-            V v = (V) xStream.fromXML(xml);
+            V v = (V) serializer.fromString(xml);
             cachedValues.put(xml.hashCode(), v);
             return v;
         }
@@ -387,7 +391,7 @@ public class HSQLDBMap<V> implements Map<Integer, V> {
         if (mapKeys.containsKey(value.hashCode())) {
             return mapKeys.get(value.hashCode());
         } else {
-            return xStream.toXML(value);
+            return serializer.toString((Serializable) value);
         }
     }
 

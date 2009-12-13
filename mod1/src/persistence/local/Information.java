@@ -4,6 +4,8 @@
  */
 package persistence.local;
 
+import persistence.network.Serializer;
+
 /**
  *
  * @author Wizard1993
@@ -29,6 +31,7 @@ public class Information {
     private String jdbcdriver;
     private String user;
     private String psw;
+    public Serializer ser;
 
 
 
