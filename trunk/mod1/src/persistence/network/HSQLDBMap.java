@@ -4,8 +4,6 @@
  */
 package persistence.network;
 
-import com.thoughtworks.xstream.XStream;
-import java.io.IOException;
 import java.io.Serializable;
 import java.sql.*;
 import java.util.*;

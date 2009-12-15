@@ -67,6 +67,11 @@ public class Person implements Serializable {
         this.cog = surname;
     }
 
+    @Override
+    public String toString() {
+        return String.format("%S-%S-%d", name,cog,ages);
+    }
+
   
 }
 
