@@ -24,7 +24,9 @@ public class Main {
         Random random=new Random(12);
         AbstractProxy<Person> personProxy =new HSQLDBProxy<Person>("person", new Information().setImpostazioni("jdbc:hsqldb:hsql://localhost/prova32;shutdown=true", "org.hsqldb.jdbcDriver", "sa", ""));
         moretest(personProxy, random);
-        //Thread.sleep(150000);
+        //Thread.sleep(4546464);
+        personProxy.dispose();
+        
     }
 
     private static void testone(AbstractProxy<Person> personProxy) {
