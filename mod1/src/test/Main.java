@@ -23,8 +23,9 @@ public class Main {
     public static void main(String... args) throws Exception {
         Random random=new Random(12);
         Information inf=new Information().setImpostazioni("jdbc:hsqldb:hsql://localhost/prova32;shutdown=true", "org.hsqldb.jdbcDriver", "sa", "");
-        inf.ser=new JSONSerializer();
-        AbstractProxy<Person> personProxy =new HSQLDBProxy<Person>("person", inf);
+        Information inf1=new Information().setImpostazioni("jdbc:hsqldb:mem:prova32", "org.hsqldb.jdbcDriver", "sa", "");
+        inf1.ser=new JSONSerializer();
+        AbstractProxy<Person> personProxy =new HSQLDBProxy<Person>("person", inf1);
         moretest(personProxy, random);
         //Thread.sleep(4546464);
         //personProxy.dispose();
@@ -43,7 +44,7 @@ public class Main {
         String[] surnames = {"rossi", "verdi", "bianchi", "ciompi","neri","gialli","visconti","sforza","pazzi","uberti","bonaparte","napolitano","mazzini","cavour","bertinotti"};
         personProxy.map.clear();
         System.out.println(personProxy.map.values());
-        for (int i = 0; i <100; i++) {
+        for (int i = 0; i <100000; i++) {
             Integer idx = random.nextInt(100);
             Person p = new Person(surnames[idx % surnames.length], names[idx % names.length], idx);
             personProxy.map.put(personProxy.generateKey(), p);
