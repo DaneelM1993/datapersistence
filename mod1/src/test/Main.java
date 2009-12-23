@@ -5,9 +5,12 @@
  */
 package test;
 
+import persistence.Serializer.JSONSerializer;
 import java.io.Serializable;
 import java.util.Random;
 import java.util.Vector;
+import persistence.Serializer.CastorSerializer;
+import persistence.Serializer.XStreamSerializer;
 import persistence.local.AbstractProxy;
 import persistence.local.Information;
 import persistence.network.*;
@@ -24,7 +27,7 @@ public class Main {
         Random random=new Random(12);
         Information inf=new Information().setImpostazioni("jdbc:hsqldb:hsql://localhost/prova32;shutdown=true", "org.hsqldb.jdbcDriver", "sa", "");
         Information inf1=new Information().setImpostazioni("jdbc:hsqldb:mem:prova32", "org.hsqldb.jdbcDriver", "sa", "");
-        inf1.ser=new JSONSerializer();
+        inf1.ser=new CastorSerializer();
         AbstractProxy<Person> personProxy =new HSQLDBProxy<Person>("person", inf1);
         moretest(personProxy, random);
         //Thread.sleep(4546464);
@@ -44,7 +47,7 @@ public class Main {
         String[] surnames = {"rossi", "verdi", "bianchi", "ciompi","neri","gialli","visconti","sforza","pazzi","uberti","bonaparte","napolitano","mazzini","cavour","bertinotti"};
         personProxy.map.clear();
         System.out.println(personProxy.map.values());
-        for (int i = 0; i <100000; i++) {
+        for (int i = 0; i <100; i++) {
             Integer idx = random.nextInt(100);
             Person p = new Person(surnames[idx % surnames.length], names[idx % names.length], idx);
             personProxy.map.put(personProxy.generateKey(), p);

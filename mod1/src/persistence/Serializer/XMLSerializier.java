@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package persistence.network;
+package persistence.Serializer;
 
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;

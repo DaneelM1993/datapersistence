@@ -4,6 +4,8 @@
  */
 package persistence.network;
 
+import persistence.Serializer.Serializer;
+import persistence.Serializer.XMLSerializier;
 import com.thoughtworks.xstream.XStream;
 import java.io.Serializable;
 import java.sql.*;
