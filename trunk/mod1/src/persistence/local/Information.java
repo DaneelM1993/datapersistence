@@ -4,7 +4,7 @@
  */
 package persistence.local;
 
-import persistence.network.Serializer;
+import persistence.Serializer.Serializer;
 
 /**
  *
