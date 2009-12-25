@@ -21,8 +21,6 @@ public class CastorSerializer implements Serializer {
 
     @Override
     public String toString(Serializable t) {
-
-
         try {
             Marshaller.marshal(t, w);
         } catch (Exception ex) {
