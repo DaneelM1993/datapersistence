@@ -57,8 +57,9 @@ public class Derbymap<V extends Serializable> implements Map<Integer, V> {
                 } else {
                     connection = DriverManager.getConnection(information.getJdbcurl(), information.getUser(), information.getPsw());
                 }
-                createTables();
+                
             }
+            createTables();
             initStatement(table);
 
         } catch (Exception e) {
@@ -420,7 +421,6 @@ public class Derbymap<V extends Serializable> implements Map<Integer, V> {
     }
 
     public void close() throws SQLException {
-        connection.commit();
         connection.close();
     }
 }
