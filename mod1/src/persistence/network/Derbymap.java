@@ -34,6 +34,7 @@ public class Derbymap<V extends Serializable> implements Map<Integer, V> {
     private static Connection connection;
     private Serializer serializer = null;
     private boolean first = true;
+    private TreeSet<Integer> keys = new TreeSet<Integer>();
 
     @Override
     public int size() {
@@ -57,7 +58,7 @@ public class Derbymap<V extends Serializable> implements Map<Integer, V> {
                 } else {
                     connection = DriverManager.getConnection(information.getJdbcurl(), information.getUser(), information.getPsw());
                 }
-                
+
             }
             createTables();
             initStatement(table);
@@ -411,11 +412,11 @@ public class Derbymap<V extends Serializable> implements Map<Integer, V> {
 
     private Set<Integer> loadKeys() throws SQLException {
         ResultSet rs = getRStocache();
-        TreeSet<Integer> set = new TreeSet<Integer>();
+
         while (rs.next()) {
-            set.add(rs.getInt(1));
+            keys.add(rs.getInt(1));
         }
-        return set;
+        return keys;
     }
 
     public void close() throws SQLException {
