@@ -90,7 +90,6 @@ public class PersistenceList<T> implements Set<T>, Serializable {
 
     @Override
     protected void finalize() throws Throwable {
-        System.out.println("end");
         proxy.commit();
         super.finalize();
     }
