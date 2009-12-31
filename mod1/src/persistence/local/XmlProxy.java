@@ -33,8 +33,6 @@ public class XmlProxy<T extends Serializable> extends  AbstractProxy<T> {
     public XmlProxy(String path) {
         this.path = path;
         LoadValues();
-        System.out.println("init XML Proxy"+path);
-
     }
 
     @Override

@@ -111,10 +111,8 @@ public class Derbymap<V extends Serializable> implements Map<Integer, V> {
             String s = serializer.toString(value);
             if (!containsKey(key)) {
                 insert(key, s);
-                //System.out.println("insert");
             } else {
                 update(s, key);
-                //System.out.println("update");
             }
             mapKeys.put(key, s);
             cachedValues.put(s.hashCode(), value);
