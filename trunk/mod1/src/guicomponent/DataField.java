@@ -28,8 +28,9 @@ public class DataField<T> extends javax.swing.JTextField implements GuiObject {
     }
 
     @Override
-    public void Bind(String Field) {
+    public GuiObject Bind(String Field) {
         binder = new Binder<T>(Field);
+        return this;
     }
 
 }

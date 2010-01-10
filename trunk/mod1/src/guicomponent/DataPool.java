@@ -19,5 +19,10 @@ public class DataPool {
     public void removeElement(GuiObject go){
         vec.remove(go);
     }
+    public void UpdateData(Object o){
+        for (GuiObject guiObject : vec) {
+            guiObject.setData(o);
+        }
+    }
 
 }

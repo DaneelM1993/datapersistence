@@ -12,6 +12,6 @@ package guicomponent;
  */
 public interface GuiObject {
     public void setData(Object o);
-    public void Bind(String Field);
+    public GuiObject Bind(String Field);
 
 }
