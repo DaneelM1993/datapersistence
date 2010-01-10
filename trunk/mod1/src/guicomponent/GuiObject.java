@@ -5,14 +5,13 @@
 
 package guicomponent;
 
-import persistence.local.updateEventListener;
 
 /**
  *
  * @author Wizard1993
  */
 public interface GuiObject {
-    
+    public void setData(Object o);
     public void Bind(String Field);
 
 }
