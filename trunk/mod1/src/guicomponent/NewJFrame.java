@@ -18,13 +18,14 @@ import test.Person;
  * @author Wizard1993
  */
 public class NewJFrame extends javax.swing.JFrame {
-
+    DataPool dataPool=new DataPool();
     /** Creates new form NewJFrame */
     public NewJFrame() {
         initComponents();
         test.Person p=new Person("cog", "nome", 80);
-        dataField1.Bind("cog");
-        dataField2.Bind("name");
+        dataPool.addGuiElement(dataField1.Bind("name"));
+        dataPool.addGuiElement(dataField2.Bind("cog"));
+        dataPool.UpdateData(p);
     }
 
     /** This method is called from within the constructor to
