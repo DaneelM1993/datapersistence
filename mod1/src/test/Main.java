@@ -10,6 +10,7 @@ import java.util.Vector;
 import persistence.Serializer.XStreamSerializer;
 import persistence.local.AbstractProxy;
 import persistence.local.Information;
+import persistence.local.XmlProxy;
 import persistence.network.*;
 
 /**
@@ -24,9 +25,9 @@ public class Main {
         inf.ser = new XStreamSerializer();
         Information inf1 = new Information().setImpostazioni("jdbc:hsqldb:prova32.db;shutdown=true", "org.hsqldb.jdbcDriver", "sa", "");
         inf1.ser = new XStreamSerializer();
-        AbstractProxy<Person> personProxy = new Derbyproxy<Person>("person", inf);
-        AbstractProxy<Person> p1=new Derbyproxy<Person>("person1", inf);        
-        compare(personProxy, p1, random);
+        AbstractProxy<Person> personProxy = new XmlProxy<Person>("D:\\out.xml");
+        moretest(personProxy, random);
+        personProxy.commit();
 
     }
 
