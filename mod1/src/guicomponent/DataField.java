@@ -17,13 +17,12 @@ public class DataField<T> extends javax.swing.JTextField implements GuiObject {
     public DataField() {
         
     }
-
-    public void setData(final T t) {
+    @Override
+    public void setData(final Object t) {
         SwingUtilities.invokeLater(new Runnable() {
-
             @Override
             public void run() {
-                setText(binder.StringValue(t));
+                setText(binder.StringValue((T) t));
             }
         });
     }

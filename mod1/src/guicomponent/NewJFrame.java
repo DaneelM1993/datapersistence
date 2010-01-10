@@ -23,7 +23,10 @@ public class NewJFrame extends javax.swing.JFrame {
     public NewJFrame() {
         initComponents();
         test.Person p=new Person("cog", "nome", 80);
+        dataField1.Bind("cog");
         dataField1.setData(p);
+        dataField2.Bind("name");
+        dataField2.setData(p);
     }
 
     /** This method is called from within the constructor to
