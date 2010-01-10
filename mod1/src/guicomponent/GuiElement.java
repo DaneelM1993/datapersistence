@@ -10,8 +10,9 @@ package guicomponent;
  *
  * @author Wizard1993
  */
-public interface GuiObject {
+public interface GuiElement {
     public void setData(Object o);
-    public GuiObject Bind(String Field);
+    public GuiElement Bind(String Field);
+    public String getFieldName();
 
 }

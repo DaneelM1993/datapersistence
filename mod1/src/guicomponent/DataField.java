@@ -10,9 +10,9 @@ import javax.swing.SwingUtilities;
  *
  * @author Wizard1993
  */
-public class DataField<T> extends javax.swing.JTextField implements GuiObject {
+public class DataField<T> extends javax.swing.JTextField implements GuiElement {
 
-    Binder<T> binder;
+    OneFieldBinder<T> binder;
 
     public DataField() {
         
@@ -28,9 +28,14 @@ public class DataField<T> extends javax.swing.JTextField implements GuiObject {
     }
 
     @Override
-    public GuiObject Bind(String Field) {
-        binder = new Binder<T>(Field);
+    public GuiElement Bind(String Field) {
+        binder = new OneFieldBinder<T>(Field);
         return this;
+    }
+
+    @Override
+    public String getFieldName() {
+        return binder.getFieldName();
     }
 
 }

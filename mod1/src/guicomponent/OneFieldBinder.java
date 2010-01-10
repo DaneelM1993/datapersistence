@@ -12,12 +12,12 @@ import java.util.logging.Logger;
  *
  * @author Wizard1993
  */
-class Binder<T> {
+class OneFieldBinder<T> {
 
     String fieldName;
     Field f;
 
-    public Binder(String fieldName) {
+    public OneFieldBinder(String fieldName) {
         this.fieldName = fieldName;
     }
 
@@ -40,8 +40,13 @@ class Binder<T> {
         try {
             return f.get(t).toString();
         } catch (Exception ex) {
-            Logger.getLogger(Binder.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(OneFieldBinder.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
+
+    public String getFieldName() {
+        return fieldName;
+    }
+    
 }
