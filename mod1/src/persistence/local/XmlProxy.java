@@ -55,14 +55,14 @@ public class XmlProxy<T extends Serializable> extends  AbstractProxy<T> {
     }
 
     @Override
-    public void NotifyUpdate() {
+    public void NotifyUpdate(final int id, final String state) {
         
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override
             public void run() {
                 for (updateEventListener eventListener : set) {
-                    eventListener.UpdateEventPerformed();
+                    eventListener.UpdateEventPerformed(new UpdateEvent(this, id, UpdateEvent.State.valueOf(state)));
                 }
             }
         });
@@ -79,7 +79,7 @@ public class XmlProxy<T extends Serializable> extends  AbstractProxy<T> {
             File f=new File(path);
             f.createNewFile();
             xstream.toXML(map,new FileOutputStream(f));
-            NotifyUpdate();
+            NotifyUpdate(0,"add");
         } catch (FileNotFoundException fnfex) {
             fnfex.printStackTrace();
         } catch (com.thoughtworks.xstream.converters.ConversionException ce) {

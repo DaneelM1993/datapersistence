@@ -27,7 +27,7 @@ public abstract class AbstractProxy<T>{
 
     public abstract void LoadValues();
 
-    public abstract void NotifyUpdate();
+    public abstract void NotifyUpdate(int id,String state);
 
     public abstract void RemoveComponentToNotify(updateEventListener uel);
 

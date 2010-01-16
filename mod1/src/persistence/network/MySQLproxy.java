@@ -41,14 +41,14 @@ public class MySQLproxy<T extends Serializable> extends  AbstractProxy<T> {
         map.isEmpty();//it cause the pre loading
     }
 
-    @Override
-    public void NotifyUpdate() {
+    
+    public void NotifyUpdate(final int id, final String state) {
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override
             public void run() {
                 for (updateEventListener eventListener : compToNotify) {
-                    eventListener.UpdateEventPerformed();
+                    eventListener.UpdateEventPerformed(new UpdateEvent(this, id, UpdateEvent.State.valueOf(state)));
 
                 }
             }
