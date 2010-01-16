@@ -6,13 +6,17 @@
 package guicomponent;
 
 import java.util.Vector;
+import persistence.local.AbstractProxy;
+import persistence.local.UpdateEvent;
+import persistence.local.updateEventListener;
 
 /**
  *
  * @author Wizard1993
  */
-public class DataPool {
+public class DataPool implements updateEventListener{
     Vector<GuiElement> vec=new Vector<GuiElement>();
+
     public void addGuiElement(GuiElement go){
         vec.add(go);
     }
@@ -23,6 +27,13 @@ public class DataPool {
         for (GuiElement guiObject : vec) {
             guiObject.setData(o);
         }
+    }
+
+    @Override
+    public void UpdateEventPerformed(UpdateEvent ev) {
+        AbstractProxy ap=(AbstractProxy) ev.getSource();
+        Object o=ap.map.get(ev.getId());
+        UpdateData(o);
     }
 
 }

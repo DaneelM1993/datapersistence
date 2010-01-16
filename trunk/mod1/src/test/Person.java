@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @author Wizard1993
  */
 
-public class Person implements Serializable {
+public class Person implements Serializable,Comparable<Person> {
     public String cog;
     public String name;
     public Integer ages;
@@ -71,6 +71,39 @@ public class Person implements Serializable {
     public String toString() {
         return String.format("%S-%S-%d", name,cog,ages);
     }
+
+    @Override
+    public int compareTo(Person o) {
+       return name.compareTo(o.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return (cog+name+ages).hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Person other = (Person) obj;
+        if ((this.cog == null) ? (other.cog != null) : !this.cog.equals(other.cog)) {
+            return false;
+        }
+        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+            return false;
+        }
+        if (this.ages != other.ages && (this.ages == null || !this.ages.equals(other.ages))) {
+            return false;
+        }
+        return true;
+    }
+
+
 
   
 }

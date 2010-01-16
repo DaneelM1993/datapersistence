@@ -237,21 +237,14 @@ public abstract class AbstractMap<V extends Serializable> implements Map<Integer
     @Override
     public Set<Integer> keySet() {
         try {
-            return loadKeys();
+            cache();
+            return mapKeys.keySet();
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    protected Set<Integer> loadKeys() throws SQLException {
-        ResultSet rs = getRStocache();
-        TreeSet<Integer> set = new TreeSet<Integer>();
-        while (rs.next()) {
-            set.add(rs.getInt(1));
-        }
-        return set;
-    }
 
     void lockValues(Object key) throws IllegalAccessException {
         checkLocked(key);
@@ -347,11 +340,12 @@ public abstract class AbstractMap<V extends Serializable> implements Map<Integer
         updateps.executeUpdate();
         updateps.clearParameters();
     }
-
+  
+    @Override
     public Collection<V> values() {
         long l = System.currentTimeMillis();
         cache();
-        Vector<V> vec = new Vector<V>(mapKeys.size() + 120);
+        Vector<V> vec = new Vector<V>(mapKeys.size() + 20);
         for (Integer ob : mapKeys.keySet()) {
             vec.add((V) get(ob));
         }
