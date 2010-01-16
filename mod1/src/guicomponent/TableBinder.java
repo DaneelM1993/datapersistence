@@ -4,16 +4,12 @@
  */
 package guicomponent;
 
-import java.util.ArrayList;
-import java.util.TreeMap;
-import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import persistence.local.AbstractProxy;
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.logging.*;
+import javax.swing.event.*;
+import javax.swing.table.*;
 
 /**
  *
@@ -24,27 +20,35 @@ public class TableBinder<T> implements  TableModel{
     DataPool dp;
     String column[];
     String Clazz;
-
+    CopyOnWriteArraySet<TableModelListener> listner=new CopyOnWriteArraySet<TableModelListener>();
+    
     public TableBinder(String[] column,String clazz,T[] rows) {
         this.column=column;
         Clazz=clazz;
         createRows(rows);
-     
     }
 
     @Override
     public int getRowCount() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return rows.size();
     }
 
     @Override
     public int getColumnCount() {
-        throw new UnsupportedOperationException("Not supported yet.");
+       return column.length;
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+            Field f = rows.get(rowIndex).getData().get(columnIndex);
+            return f.get(rows.get(rowIndex).o);
+        } catch (IllegalArgumentException ex) {
+            Logger.getLogger(TableBinder.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(TableBinder.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
     private void createRows(T[] rows){
         for (T t : rows) {
@@ -77,17 +81,17 @@ public class TableBinder<T> implements  TableModel{
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        rows.get(rowIndex).setValue(columnIndex,aValue);
     }
 
     @Override
     public void addTableModelListener(TableModelListener l) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        listner.add(l);
     }
 
     @Override
     public void removeTableModelListener(TableModelListener l) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        listner.remove(l);
     }
 
 

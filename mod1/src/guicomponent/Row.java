@@ -7,8 +7,9 @@ package guicomponent;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -16,6 +17,7 @@ import java.util.Vector;
  */
 public class Row {
     String names[];
+    Vector<Field> vec=new Vector<Field>();
     Object o=new Object();
     public Row(String[] names) {
         this.names = names;
@@ -25,8 +27,8 @@ public class Row {
         this.o = o;
     }
 
-    public Vector getData(){
-        Vector<Object> vec=new Vector<Object>();
+    public Vector<Field> getData(){
+        
         Class c=o.getClass();
         HashMap<String,Field> map=new HashMap<String, Field>();
         Field[] f=c.getDeclaredFields();
@@ -42,6 +44,15 @@ public class Row {
     @Override
     public int hashCode() {
         return o.hashCode();
+    }
+    public void setValue(int col,Object o){
+        try {
+            vec.get(col).set(this.o, o);
+        } catch (IllegalArgumentException ex) {
+            Logger.getLogger(Row.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(Row.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 
