@@ -10,7 +10,6 @@ package persistence.local;
  * @author Wizard1993
  */
 public interface updateEventListener {
-
-    public void UpdateEventPerformed();
+    public void UpdateEventPerformed(UpdateEvent ev);
 
 }

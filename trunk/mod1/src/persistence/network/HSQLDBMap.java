@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.sql.*;
 import java.util.*;
 import java.util.logging.*;
+import persistence.local.AbstractProxy;
 import persistence.local.Information;
 
 /**
@@ -33,6 +34,11 @@ public class HSQLDBMap<V extends Serializable> implements Map<Integer, V> {
     private static Connection connection;
     private Serializer serializer = null;
     private boolean first = true;
+    private AbstractProxy<V> notifier;
+
+    public void setNotifier(AbstractProxy<V> notifier) {
+        this.notifier = notifier;
+    }
 
     @Override
     public int size() {
@@ -129,7 +135,7 @@ public class HSQLDBMap<V extends Serializable> implements Map<Integer, V> {
             notifytoUpdate(lockedID);
             usedKey.remove(key.hashCode());
             connection.close();
-
+            notifier.NotifyUpdate(key.hashCode(), "delete");
         } catch (Exception e) {
             e.printStackTrace();
         }

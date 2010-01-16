@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.sql.*;
 import java.util.*;
 import java.util.logging.*;
+import persistence.local.AbstractProxy;
 import persistence.local.Information;
 
 /**
@@ -35,14 +36,17 @@ public class Derbymap<V extends Serializable> implements Map<Integer, V> {
     private Serializer serializer = null;
     private boolean first = true;
     private TreeSet<Integer> keys = new TreeSet<Integer>();
-
+    private AbstractProxy<V> notifier;
     @Override
     public int size() {
         int i = getSize();
         return i;
 
     }
+    public void setEventTrasmitter(AbstractProxy<V> p){
+        notifier=p;
 
+    }
     public Derbymap(String table, Information information) {
         this.table = table;
         try {
@@ -134,7 +138,7 @@ public class Derbymap<V extends Serializable> implements Map<Integer, V> {
             notifytoUpdate(lockedID);
             usedKey.remove(key.hashCode());
             connection.close();
-
+            notifier.NotifyUpdate(key.hashCode(), "delete");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -325,11 +329,13 @@ public class Derbymap<V extends Serializable> implements Map<Integer, V> {
     }
 
     private void insert(final Integer key, String s) throws SQLException {
+
         insert.setInt(1, key);
         insert.setString(2, s);
         insert.execute();
         insert.clearParameters();
         usedKey.add(key);
+        notifier.NotifyUpdate(key, "add");
     }
 
     private void notifytoUpdate(final Integer key) {
@@ -371,7 +377,7 @@ public class Derbymap<V extends Serializable> implements Map<Integer, V> {
         updateps.setInt(2, key);
         updateps.executeUpdate();
         updateps.clearParameters();
-
+        notifier.NotifyUpdate(key, "update");
     }
 
     private int getSize() {

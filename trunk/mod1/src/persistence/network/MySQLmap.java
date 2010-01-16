@@ -8,6 +8,7 @@ import com.thoughtworks.xstream.XStream;
 import java.sql.*;
 import java.util.*;
 import java.util.logging.*;
+import persistence.local.AbstractProxy;
 import persistence.local.Information;
 
 /**
@@ -31,12 +32,16 @@ public class MySQLmap<V> implements Map<Integer, V> {
     private static Connection connection;
     private XStream xStream = new XStream();
     private boolean first = true;
-
+    private AbstractProxy<V> notifier;
     @Override
     public int size() {
         int i = getSize();
         return i;
 
+    }
+
+    public void setNotifier(AbstractProxy<V> notifier) {
+        this.notifier = notifier;
     }
 
     public MySQLmap(String table, Information information) {
@@ -46,7 +51,6 @@ public class MySQLmap<V> implements Map<Integer, V> {
             Class.forName(information.getJdbcdriver());
             connection = DriverManager.getConnection(information.getJdbcurl(), information.getUser(), information.getPsw());
             createTables();
-
             initStatement(table);
 
         } catch (Exception e) {
@@ -120,8 +124,8 @@ public class MySQLmap<V> implements Map<Integer, V> {
             connection.prepareCall("delete from " + table + " where ID=" + key.hashCode()).execute();
             notifytoUpdate(lockedID);
             usedKey.remove(key.hashCode());
-            mapKeys.remove(key);
-
+            mapKeys.remove(key.hashCode());
+            notifier.NotifyUpdate(key.hashCode(), "delete");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -324,6 +328,8 @@ public class MySQLmap<V> implements Map<Integer, V> {
         insert.execute();
         insert.clearParameters();
         usedKey.add(key);
+        notifier.NotifyUpdate(key, "add");
+
     }
 
     private void notifytoUpdate(final Integer key) {
@@ -364,6 +370,7 @@ public class MySQLmap<V> implements Map<Integer, V> {
         updateps.setInt(2, key);
         updateps.executeUpdate();
         updateps.clearParameters();
+        notifier.NotifyUpdate(key, "update");
     }
 
     private int getSize() {
