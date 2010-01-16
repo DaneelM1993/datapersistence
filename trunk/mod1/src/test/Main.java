@@ -23,6 +23,7 @@ import persistence.network.*;
 public class Main {
 
     static Vector<Person> vec;
+    static public  AbstractProxy<Person> personProxy = new XmlProxy<Person>("D:\\out.xml");
 
     public static void main(String... args) throws Exception {
         Random random = new Random(123);
@@ -30,7 +31,7 @@ public class Main {
         inf.ser = new XStreamSerializer();
         Information inf1 = new Information().setImpostazioni("jdbc:hsqldb:prova32.db;shutdown=true", "org.hsqldb.jdbcDriver", "sa", "");
         inf1.ser = new XStreamSerializer();
-        AbstractProxy<Person> personProxy = new XmlProxy<Person>("D:\\out.xml");
+
         AbstractProxy<Person> p1 = new HSQLDBProxy<Person>("person", inf1);
         //moretest(personProxy, random);
         compare(p1, personProxy, random);
@@ -77,8 +78,8 @@ public class Main {
     static void testunit(AbstractProxy<Person> a, AbstractProxy<Person> good) {
         Random r = new Random();
         compare(a, good, r);
-        Vector<Person> p=new Vector<Person>(a.map.values());
-        Vector<Person> p1=new Vector<Person>(good.map.values());
+        Vector<Person> p = new Vector<Person>(a.map.values());
+        Vector<Person> p1 = new Vector<Person>(good.map.values());
         Collections.sort(p);
         Collections.sort(p1);
         System.out.println(Arrays.equals(p.toArray(), p1.toArray()));
