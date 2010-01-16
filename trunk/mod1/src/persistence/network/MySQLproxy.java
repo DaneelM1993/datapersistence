@@ -64,7 +64,6 @@ public class MySQLproxy<T extends Serializable> extends  AbstractProxy<T> {
     @Override
     public void commit() {
         try {
-            NotifyUpdate();
             localBackup();
         } catch (Exception e) {
             e.printStackTrace();
@@ -95,6 +94,10 @@ public class MySQLproxy<T extends Serializable> extends  AbstractProxy<T> {
 
     @Override
     public void dispose() {       
+        try {
             ((MySQLmap) map).close();
+        } catch (SQLException ex) {
+            Logger.getLogger(MySQLproxy.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
