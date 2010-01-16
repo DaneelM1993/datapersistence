@@ -26,14 +26,14 @@ public class BinaryProxy<T extends Serializable> extends  AbstractProxy<T> {
         this.comp.add(uel);
     }
     @Override
-    public void NotifyUpdate() {
+    public void NotifyUpdate(final  int id,final String state) {
         //ln("dsa");
         new Thread(new Runnable() {
             private Iterable<updateEventListener> c = comp;
             @Override
             public void run() {
                 for (updateEventListener eventListener : this.c) {
-                    eventListener.UpdateEventPerformed();
+                    eventListener.UpdateEventPerformed(new UpdateEvent(this, 0, UpdateEvent.State.add));
                 }
             }
         }).start();
@@ -49,7 +49,6 @@ public class BinaryProxy<T extends Serializable> extends  AbstractProxy<T> {
         try {
             ObjectOutputStream ois = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(this.path)));
             ois.writeObject(this.map);
-            NotifyUpdate();
             ois.close();
             
         } catch (IOException ex) {
