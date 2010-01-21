@@ -93,6 +93,4 @@ public class TableBinder<T> implements  TableModel{
     public void removeTableModelListener(TableModelListener l) {
         listner.remove(l);
     }
-
-
 }
