@@ -26,7 +26,7 @@ public class BinaryProxy<T extends Serializable> extends  AbstractProxy<T> {
         this.comp.add(uel);
     }
     @Override
-    public void NotifyUpdate(final  int id,final String state) {
+    public void NotifyUpdate(final  int id,final UpdateEvent.State state) {
         //ln("dsa");
         new Thread(new Runnable() {
             private Iterable<updateEventListener> c = comp;
