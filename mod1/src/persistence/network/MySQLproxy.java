@@ -23,6 +23,7 @@ public class MySQLproxy<T extends Serializable> extends  AbstractProxy<T> {
     Set<updateEventListener> compToNotify = Collections.synchronizedSet(new HashSet<updateEventListener>());
     public MySQLproxy(String table,Information information) {
         map = new MySQLmap<T>(table, information);
+        ((AbstractMap)map).setNotifier(this);
         System.out.println("network init "+table);
         pathofbackup=table+".xml";
     }

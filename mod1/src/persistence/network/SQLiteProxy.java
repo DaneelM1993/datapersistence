@@ -23,6 +23,7 @@ public class SQLiteProxy<T extends Serializable> extends  AbstractProxy<T> {
     Set<updateEventListener> compToNotify = Collections.synchronizedSet(new HashSet<updateEventListener>());
     public SQLiteProxy(String table,Information information) {
         map = new SQLiteMap<T>(table, information);
+        ((AbstractMap)map).setNotifier(this);
         System.out.println("network init "+table);
         pathofbackup=table+".xml";
     }
