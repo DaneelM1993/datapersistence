@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 import persistence.local.*;
 import java.io.Serializable;
 import java.util.*;
-import javax.print.DocFlavor.STRING;
 import javax.swing.SwingUtilities;
 
 
@@ -25,6 +24,7 @@ public class Derbyproxy<T extends Serializable> extends  AbstractProxy<T> {
         System.out.println("network init "+table);
         map = new Derbymap<T>(table, information);
         pathofbackup=table+".xml";
+        ((AbstractMap)map).setNotifier(this);
     }
     public Derbyproxy<T> init(){
         return this;

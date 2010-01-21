@@ -26,9 +26,11 @@ public class HSQLDBProxy<T extends Serializable> extends AbstractProxy<T> {
     String table;
 
     public HSQLDBProxy(String table, Information information) {
+
         createConnection(table, information);
         map = new HSQLDBMap<T>(table, information);
         System.out.println("network init " + table);
+        ((AbstractMap)map).setNotifier(this);
         pathofbackup = table + ".xml";
     }
 

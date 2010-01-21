@@ -27,8 +27,9 @@ public class SQLiteMap<V extends Serializable>  extends AbstractMap<V> {
 
                 Class.forName(information.getJdbcdriver());
                 connection = DriverManager.getConnection(information.getJdbcurl(), information.getUser(), information.getPsw());
-                createTables();
+                
             }
+            createTables();
             initStatement(table);
 
         } catch (Exception e) {
@@ -59,7 +60,6 @@ public class SQLiteMap<V extends Serializable>  extends AbstractMap<V> {
             statement.close();
 
         } catch (Exception e) {
-            e.printStackTrace();
             System.exit(lockedID);
         }
     }
