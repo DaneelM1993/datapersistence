@@ -5,24 +5,15 @@
 package persistence.network;
 
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.Vector;
+import java.sql.*;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import persistence.Serializer.Serializer;
 import persistence.Serializer.XMLSerializier;
 import persistence.local.AbstractProxy;
 import persistence.local.Information;
+import persistence.local.UpdateEvent;
 
 /**
  *
@@ -283,10 +274,10 @@ public abstract class AbstractMap<V extends Serializable> implements Map<Integer
             String s = serializer.toString(value);
             if (!containsKey(key)) {
                 insert(key, s);
-                //System.out.println("insert");
+                notifier.NotifyUpdate(key, UpdateEvent.State.add);
             } else {
                 update(s, key);
-                //System.out.println("update");
+                notifier.NotifyUpdate(key, UpdateEvent.State.update);
             }
             mapKeys.put(key, s);
             cachedValues.put(s.hashCode(), value);
@@ -317,7 +308,7 @@ public abstract class AbstractMap<V extends Serializable> implements Map<Integer
             notifytoUpdate(lockedID);
             usedKey.remove(key.hashCode());
             HSQLDBMap.connection.close();
-            notifier.NotifyUpdate(key.hashCode(), "delete");
+            notifier.NotifyUpdate(key.hashCode(), UpdateEvent.State.remove);
         } catch (Exception e) {
             e.printStackTrace();
         }

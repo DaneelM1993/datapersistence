@@ -42,13 +42,13 @@ public class MySQLproxy<T extends Serializable> extends  AbstractProxy<T> {
     }
 
     
-    public void NotifyUpdate(final int id, final String state) {
+    public void NotifyUpdate(final int id, final UpdateEvent.State state) {
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override
             public void run() {
                 for (updateEventListener eventListener : compToNotify) {
-                    eventListener.UpdateEventPerformed(new UpdateEvent(this, id, UpdateEvent.State.valueOf(state)));
+                    eventListener.UpdateEventPerformed(new UpdateEvent(this, id, state));
 
                 }
             }

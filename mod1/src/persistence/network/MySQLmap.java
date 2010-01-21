@@ -21,7 +21,7 @@ public class MySQLmap<V extends Serializable> extends AbstractMap<V> {
             Class.forName(information.getJdbcdriver());
             connection = DriverManager.getConnection(information.getJdbcurl(), information.getUser(), information.getPsw());
             createTables();
-//            initStatement(table);
+            initStatement(table);
 
         } catch (Exception e) {
             e.printStackTrace();
