@@ -4,7 +4,9 @@
  */
 package persistence.local;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -13,13 +15,13 @@ import java.util.Set;
  *
  * @author wizard1993
  */
-public abstract class AbstractProxy<T>{
+public abstract class AbstractProxy<T> implements Provider{
 
     public Map<Integer, T> map = null;
     private Random seed = new Random();
     private Set<Integer> set=new HashSet<Integer>();
 
-    public abstract void AddComponentToNotify(updateEventListener uel);
+
 
     public abstract void lockValues(Integer Key) throws IllegalAccessException;
 
@@ -27,9 +29,7 @@ public abstract class AbstractProxy<T>{
 
     public abstract void LoadValues();
 
-    public abstract void NotifyUpdate(int id,UpdateEvent.State state);
 
-    public abstract void RemoveComponentToNotify(updateEventListener uel);
 
     public abstract void commit();
 
@@ -43,4 +43,10 @@ public abstract class AbstractProxy<T>{
         }        
         return i;
     }
+
+    @Override
+    public List getDataList() {
+        return Arrays.asList(map.values().toArray());
+    }
+
 }

@@ -5,14 +5,13 @@
 
 package guicomponent;
 
+import java.util.List;
 
 /**
  *
  * @author Wizard1993
  */
-public interface GuiElement {
-    public void setData(Object o);
-    public GuiElement Bind(String Field);
-    public String getFieldName();
+public interface Operator<T> {
+    public List<T> doSome(List<T> list);
 
 }

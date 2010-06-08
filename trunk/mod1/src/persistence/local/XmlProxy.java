@@ -50,6 +50,7 @@ public class XmlProxy<T extends Serializable> extends  AbstractProxy<T> {
             ioe.printStackTrace();
         }
         catch (Exception e) {
+            e.printStackTrace();
             map=new TreeMap<Integer, T>();
         }
     }
@@ -82,8 +83,6 @@ public class XmlProxy<T extends Serializable> extends  AbstractProxy<T> {
             //NotifyUpdate(0,"add");
         } catch (FileNotFoundException fnfex) {
             fnfex.printStackTrace();
-        } catch (com.thoughtworks.xstream.converters.ConversionException ce) {
-            System.err.println(ce.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -102,5 +101,6 @@ public class XmlProxy<T extends Serializable> extends  AbstractProxy<T> {
     @Override
     public void dispose() {
     }
+
 
 }

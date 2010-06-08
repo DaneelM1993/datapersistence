@@ -117,9 +117,8 @@ public class HSQLDBProxy<T extends Serializable> extends AbstractProxy<T> {
                     connection = DriverManager.getConnection(information.getJdbcurl(), information.getUser(), information.getPsw());
                     connection.close();
                 } catch (Exception e) {
-                    System.err.println("error creating network connection, try to start local server");
-                    String dbname = getDBname(information.getJdbcurl());
-                    org.hsqldb.Server.main(new String[]{"-database.0", "file:" + dbname, "-dbname.0", dbname});
+                    System.err.println("error creating network connection, maybe server isn't Running?");
+                                
 
                 }
             }
