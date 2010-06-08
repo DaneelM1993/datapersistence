@@ -7,7 +7,7 @@ package test;
 
 import java.io.Serializable;
 import persistence.local.AbstractProxy;
-import persistence.local.PersistenceList;
+import persistence.local.PersistenceSet;
 import persistence.local.XmlProxy;
 
 /**
@@ -17,7 +17,7 @@ import persistence.local.XmlProxy;
 public class City implements Serializable{
     String name;
     static AbstractProxy<Person> proxy=new XmlProxy<Person>("person.xml");
-    PersistenceList<Person> people=new PersistenceList<Person>(proxy);
+    PersistenceSet<Person> people=new PersistenceSet<Person>(proxy);
 
     public City(String name) {
         this.name = name;
@@ -27,7 +27,7 @@ public class City implements Serializable{
         return name;
     }
 
-    public PersistenceList<Person> getPeople() {
+    public PersistenceSet<Person> getPeople() {
         return people;
     }
 
@@ -35,7 +35,7 @@ public class City implements Serializable{
         this.name = name;
     }
 
-    public void setPeople(PersistenceList<Person> people) {
+    public void setPeople(PersistenceSet<Person> people) {
         this.people = people;
     }
     
